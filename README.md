@@ -65,3 +65,14 @@ Outros arquivos: `tests/comissoes.test.mjs` (testes automatizados), `docs/REGRAS
 1. Rode `node --test` e confirme que todos os testes passam.
 2. Faça commit dos arquivos alterados (`js/comissoes.js`, `js/home.js`, `home.html`, `tests/`, `docs/`, `package.json`, `README.md`) e `git push` na branch publicada.
 3. Em Settings > Pages, confirme a branch/pasta; aguarde o deploy e abra o site com Ctrl+Shift+R (cache dos módulos JS).
+
+## Alterações de outubro/2026 (simulador)
+
+- Índice de qualidade e férias saíram da tela (o motor ainda aceita esses campos de forma opcional).
+- PAP: seletor "Dentro dos três primeiros meses?" (Sim/Não) → garantia de R$ 300 (regra do PDF p.7, só PAP).
+- Faixa atual, "faltam R$ X para mudar de faixa e chegar a R$ Z", aviso de mudança de faixa e botão de WhatsApp.
+- Projeção até o fim do mês pela média diária (dias trabalhados/restantes informados; estimativa, não é regra do PDF).
+- Identidade visual Terra (css/style.css, variáveis no topo; banner em img/).
+- Último cálculo salvo em `users/{uid}.lastCalculation`; regras em `firestore.rules` (publicar no console).
+  As regras NÃO foram testadas em emulador (bloqueado neste ambiente): teste no "Playground de regras".
+- Testes: `node --test` (53 testes do motor e dos textos).

@@ -4,27 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
-  <title>Simulador de Comissões - Terra Fibra</title>
+  <title>Painel & Simulador - Terra Fibra</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    html, body { margin: 0; min-height: 100vh; background: var(--cor-fundo, #f3f4f6); }
+    html, body { margin: 0; min-height: 100vh; }
+    html { background: var(--cor-fundo); }
+    body { background: var(--cor-fundo); background-image: var(--gradiente-fundo); background-size: 100% 100%; background-repeat: no-repeat; }
     body {
       visibility: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: flex-start;
       padding: 24px 16px;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      box-sizing: border-box;
+      font-family: var(--fonte);
       color: var(--cor-texto, #111827);
     }
     body.autenticado { visibility: visible; }
 
     .container-painel {
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 20px;
     }
 
     .painel-card {
@@ -32,138 +36,172 @@
       border: 1px solid var(--cor-borda, #d1d5db);
       border-radius: 12px;
       padding: 24px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 10px 30px rgba(60, 0, 80, 0.35);
     }
 
-    .campo { margin-bottom: 14px; }
-    .campo label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; }
-    .campo input, .campo select {
-      width: 100%;
-      padding: 10px;
+    .usuario-detalhes {
+      background-color: var(--cor-superficie-2);
+      border: 1px solid var(--cor-borda);
       border-radius: 8px;
-      border: 1px solid var(--cor-borda, #d1d5db);
-      font-size: 0.95rem;
+      padding: 12px 16px;
+      margin-top: 12px;
     }
 
-    .checkbox-container {
+    .item-detalhe {
       display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
-      font-size: 0.88rem;
-      cursor: pointer;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 0.9rem;
+    }
+
+    .calc-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 12px;
     }
 
     .resultado-simulacao {
-      background: var(--cor-fundo-input-ativo, #eef2ff);
-      border: 1px solid var(--cor-borda-foco, #c7d2fe);
-      padding: 18px;
-      border-radius: 10px;
+      background: linear-gradient(135deg, #f2dcfa 0%, #ffe3d0 100%);
+      border: 1px solid var(--cor-borda-foco);
+      padding: 16px;
+      border-radius: 8px;
       margin-top: 16px;
       text-align: center;
     }
 
     .valor-destaque {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       font-weight: 700;
-      color: var(--cor-primaria, #2563eb);
+      color: var(--cor-primaria);
     }
 
-    .box-notificacao {
-      background-color: #fef3c7;
-      border: 1px solid #fde68a;
-      color: #92400e;
-      padding: 14px;
-      border-radius: 8px;
-      margin-top: 14px;
-      font-size: 0.9rem;
-      line-height: 1.4;
-    }
-
-    .btn-whatsapp {
-      display: inline-block;
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      background-color: #25D366;
-      color: #fff;
-      font-weight: 600;
-      text-align: center;
-      border-radius: 8px;
-      text-decoration: none;
-      box-sizing: border-box;
-    }
-
+    .btn-sair:hover { filter: brightness(1.15); }
     .btn-sair {
       width: 100%;
-      padding: 10px;
+      padding: 11px 16px;
       font-weight: 600;
-      color: var(--cor-erro, #b91c1c);
-      background: var(--cor-erro-fundo, #fef2f2);
-      border: 1px solid var(--cor-erro-borda, #fca5a5);
+      color: #fff;
+      background: var(--terra-roxo-escuro);
+      border: 1px solid var(--terra-roxo-escuro);
       border-radius: 8px;
       cursor: pointer;
     }
+
+    /* ---- Simulador dinâmico ---- */
+    select {
+      width: 100%;
+      padding: 11px 12px;
+      font: inherit;
+      color: inherit;
+      background: var(--cor-campo);
+      border: 1px solid var(--cor-borda);
+      border-radius: 8px;
+    }
+    .campo-checkbox { display: flex; gap: 10px; align-items: flex-start; }
+    .campo-checkbox input { width: auto; margin-top: 4px; }
+    .campo-checkbox label { margin: 0; font-weight: 400; }
+    .nota-simulador { font-size: 0.82rem; color: var(--cor-texto-suave); margin: 4px 0 0; }
+    .msg-preencher { color: var(--cor-texto-suave); font-size: 0.92rem; text-align: left; margin: 0; padding-left: 18px; }
+    .msg-preencher.erro { color: var(--cor-erro, #b91c1c); }
+    .lista-componentes { list-style: none; margin: 12px 0 0; padding: 0; text-align: left; font-size: 0.92rem; }
+    .lista-componentes li { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; border-bottom: 1px dashed var(--cor-borda-foco); }
+    .banner-parcial, .lista-avisos li {
+      background: #fffbeb; border: 1px solid #fcd34d; color: #92400e;
+      border-radius: 8px; padding: 8px 10px; font-size: 0.85rem; text-align: left;
+    }
+    .banner-parcial { font-weight: 600; margin-bottom: 10px; }
+    .lista-avisos { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+    .memoria { margin-top: 12px; text-align: left; font-size: 0.85rem; color: var(--cor-texto-suave); }
+    .memoria summary { cursor: pointer; font-weight: 600; }
+    .memoria ol { margin: 6px 0 0; padding-left: 20px; }
+    .status-salvamento { margin-top: 10px; font-size: 0.8rem; color: var(--cor-texto-suave); text-align: left; min-height: 1em; }
+    .status-salvamento.erro { color: var(--cor-erro, #b91c1c); font-weight: 600; }
+    .btn-tentar-salvar { margin-top: 8px; padding: 8px 14px; font: inherit; font-size: 0.85rem; font-weight: 600; background: #fff; border: 1px solid var(--cor-erro-borda, #fca5a5); color: var(--cor-erro, #b91c1c); border-radius: 8px; cursor: pointer; }
+    .btn-tentar-salvar[hidden] { display: none; }
+    .box-notificacao { background: #fff7e6; border: 1px solid #f5c76b; color: #7a4a00; padding: 14px; border-radius: 10px; margin-top: 14px; font-size: 0.95rem; line-height: 1.45; text-align: left; }
+    .box-notificacao p { margin: 0 0 6px; }
+    .box-notificacao p:last-of-type { margin-bottom: 0; }
+    .box-notificacao.sobe { background: #ecfdf3; border-color: #6ce9a6; color: #05603a; }
+    .btn-whatsapp { display: block; padding: 12px; margin-top: 10px; background: #1a7f43; color: #fff; font-weight: 600; text-align: center; border-radius: 8px; text-decoration: none; }
+    .btn-whatsapp:hover { filter: brightness(0.92); }
+    .faixa-atual { margin: 10px 0 0; font-size: 0.95rem; color: var(--cor-texto); }
+    .bloco-projecao { margin-top: 16px; border: 1px solid var(--cor-borda); border-radius: 10px; padding: 10px 14px; background: var(--cor-superficie-2); text-align: left; }
+    .bloco-projecao summary { cursor: pointer; font-weight: 600; color: var(--cor-primaria); }
+    .bloco-projecao .linha-dias { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .bloco-projecao .campo { margin-bottom: 0; }
+    .resultado-projecao { margin-top: 12px; font-size: 0.92rem; }
+    .resultado-projecao p { margin: 0 0 6px; }
+    .resultado-projecao .erro { color: var(--cor-erro); }
+    .fonte-simulador { margin-top: 10px; font-size: 0.78rem; color: var(--cor-texto-suave); text-align: left; }
   </style>
 </head>
 <body>
   <div class="container-painel">
     
+    <!-- CARD DE PERFIL -->
     <main class="painel-card">
-      <h1 id="saudacao" style="margin:0 0 6px; font-size:1.4rem;">Olá!</h1>
-      <div style="font-size:0.9rem; color:#6b7280;">Telefone: <span id="numero-usuario">--</span></div>
+      <div class="marca"><img src="img/banner-terra.jpg" alt="Terra – conectado por Vivo Fibra" width="447" height="170"></div>
+      <h1 id="saudacao" style="margin:0; text-align:left;">Olá!</h1>
+      <p style="color:var(--cor-texto-suave); margin:4px 0 12px;">Bem-vindo ao portal de comissões Terra Fibra</p>
+
+      <div class="usuario-detalhes">
+        <div class="item-detalhe"><span style="font-weight:600;">Nome:</span> <span id="nome-usuario">--</span></div>
+        <div class="item-detalhe"><span style="font-weight:600;">Telefone:</span> <span id="numero-usuario">--</span></div>
+      </div>
     </main>
 
-    <section class="painel-card">
-      <h2 style="margin-top:0; font-size:1.2rem;">Simulador de Comissões</h2>
-      
-      <div class="campo">
-        <label for="canal-vendas">Canal / Cargo</label>
-        <select id="canal-vendas">
-          <option value="pap">Consultor PAP</option>
-          <option value="callcenter">Consultor Call Center</option>
-          <option value="digital">Consultor Digital</option>
-          <option value="lider">Líder (PAP / Call Center / Digital)</option>
-          <option value="executivo">Executivo de Vendas</option>
-        </select>
-      </div>
+    <!-- SIMULADOR DE COMISSÃO (campos montados por js/home.js a partir de js/comissoes.js) -->
+    <section class="painel-card" aria-labelledby="titulo-simulador">
+      <h2 id="titulo-simulador" style="margin-top:0;">Simulador de Comissões</h2>
+      <p class="nota-simulador">
+        Estimativa NÃO oficial, calculada com as regras do documento de Remuneração Variável de
+        Outubro/2026, sem o acelerador de qualidade. O pagamento depende de os clientes estarem instalados e ativos na base.
+      </p>
 
-      <div class="campo" id="box-venda-total">
-        <label for="venda-instalada">Receita de Venda Instalada (R$)</label>
-        <input type="number" id="venda-instalada" placeholder="Ex: 3000" value="3000">
-      </div>
+      <form id="form-simulador" class="calc-box" novalidate>
+        <div class="campo">
+          <label for="canal-vendas">Canal / Cargo</label>
+          <select id="canal-vendas"></select>
+        </div>
 
-      <div class="campo" id="box-meta" style="display:none;">
-        <label for="meta-mes">Meta do Mês (R$)</label>
-        <input type="number" id="meta-mes" placeholder="Ex: 4000" value="4000">
-      </div>
+        <div id="campos-dinamicos" class="calc-box" style="margin-top:0;"></div>
 
-      <div class="campo" id="box-novo-colaborador">
-        <label class="checkbox-container">
-          <input type="checkbox" id="chk-novo-colaborador">
-          <span>Admitido nos últimos 3 meses (Piso R$ 300)</span>
-        </label>
-      </div>
+        <button type="submit" id="btn-calcular" class="btn">Calcular Comissão</button>
+      </form>
 
-      <button type="button" id="btn-calcular" class="btn" style="margin-top:8px;">Calcular Comissão</button>
-
-      <!-- RESULTADO -->
-      <div class="resultado-simulacao" id="box-resultado">
-        <div style="font-size:0.85rem; color:#4b5563;">Comissão Estimada</div>
+      <div class="resultado-simulacao" id="box-resultado" aria-live="polite">
+        <div style="font-size:0.9rem; color:var(--cor-texto-suave);">Comissão estimada (RV total)</div>
         <div class="valor-destaque" id="rv-total-exibida">R$ 0,00</div>
-        <div id="detalhes-calculo" style="font-size:0.85rem; color:#6b7280; margin-top:4px;"></div>
+        <p id="faixa-atual" class="faixa-atual" hidden></p>
+        <div id="box-notificacao" class="box-notificacao" hidden>
+          <div id="texto-notificacao"></div>
+          <a id="btn-whatsapp" class="btn-whatsapp" href="#" target="_blank" rel="noopener noreferrer" hidden>📲 Enviar lembrete no WhatsApp</a>
+        </div>
+        <div id="detalhes-calculo"></div>
+        <div id="status-salvamento" class="status-salvamento" role="status" aria-live="polite"></div>
+        <button type="button" id="btn-tentar-salvar" class="btn-tentar-salvar" hidden>Tentar salvar novamente</button>
       </div>
 
-      <!-- NOTIFICAÇÃO E DICA DE FAIXA -->
-      <div id="box-notificacao" class="box-notificacao" style="display:none;">
-        <div id="texto-notificacao"></div>
-        <a id="btn-whatsapp" href="#" target="_blank" class="btn-whatsapp" style="display:none;">
-          📲 Enviar Lembrete no WhatsApp
-        </a>
-      </div>
+      <details class="bloco-projecao" id="bloco-projecao">
+        <summary>Projeção até o fim do mês</summary>
+        <p class="nota-simulador">Usa a média diária do que você já realizou. Informe os dias; a projeção é só uma estimativa.</p>
+        <div class="linha-dias">
+          <div class="campo">
+            <label for="dias-trabalhados">Dias trabalhados no mês</label>
+            <input id="dias-trabalhados" type="number" inputmode="numeric" min="1" max="31" step="1">
+          </div>
+          <div class="campo">
+            <label for="dias-restantes">Dias restantes no mês</label>
+            <input id="dias-restantes" type="number" inputmode="numeric" min="0" max="31" step="1">
+          </div>
+        </div>
+        <div id="resultado-projecao" class="resultado-projecao" aria-live="polite"></div>
+      </details>
     </section>
 
-    <div class="painel-card" style="padding:14px;">
+    <!-- BOTÃO SAIR -->
+    <div class="painel-card" style="padding:16px;">
       <button type="button" id="btn-sair" class="btn-sair">Sair da Conta</button>
     </div>
 

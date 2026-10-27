@@ -1,59 +1,70 @@
 rules_version = '2';
 
-// Regras do Cloud Firestore.
-// Publique em: Console do Firebase > Firestore > Regras (ou `firebase deploy --only firestore:rules`).
+// Regras do Cloud Firestore — Terra Fibra.
+// Publique em: Console do Firebase > Firestore > Regras > Publicar.
 //
-// Modelo: cada usuário só acessa users/{seu uid}. O backend confiável
-// (Admin SDK) ignora estas regras e deve validar permissões por conta própria.
+// Modelo: cada usuário só lê/grava o PRÓPRIO documento users/{uid}.
+//  - Cadastro (js/auth.js): cria users/{uid} com displayName, phoneNumber, email, createdAt.
+//  - Último cálculo (js/ultimo-calculo-db.js): atualiza SOMENTE o campo `lastCalculation`.
+//  - Nenhum usuário lê ou altera dados de outro usuário. Exclusão só pelo backend.
+// ATENÇÃO: o painel admin atual (admin.html/admin.js) usa credenciais no front e acessa a
+// coleção inteira sem login no Firebase; ele NÃO funciona com estas regras (de propósito).
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function logado() {
-      return request.auth != null;
+    function dono(uid) {
+      return request.auth != null && request.auth.uid == uid;
     }
 
-    // O e-mail sintético do token deve corresponder ao telefone gravado,
-    // impedindo que alguém registre um telefone que não é o da própria conta.
-    // Mantenha o domínio igual a DOMINIO_EMAIL_SINTETICO em js/firebase-config.js.
-    function telefoneConfere(telefone) {
-      return request.auth.token.email != null
-        && request.auth.token.email.matches('^[0-9]+@phone\\.invalid$')
-        && ('+' + request.auth.token.email.split('@')[0]) == telefone;
+    function numeroOk(v) {
+      return v is number && v >= 0 && v <= 1000000000;
+    }
+
+    function calculoValido(c) {
+      return c is map
+        && c.keys().hasOnly(['category', 'categoryLabel', 'inputs', 'baseCommission', 'qualityAccelerator',
+                             'components', 'finalAmount', 'pctAttainment', 'partial', 'memory', 'warnings',
+                             'rulesVersion', 'calculatedAt'])
+        && c.keys().hasAll(['category', 'categoryLabel', 'inputs', 'baseCommission', 'components',
+                            'finalAmount', 'partial', 'memory', 'warnings', 'rulesVersion', 'calculatedAt'])
+        && c.category in ['consultor_pap', 'consultor_callcenter', 'consultor_digital', 'vendedor_loja',
+                          'lider_pap', 'lider_callcenter', 'lider_digital_time', 'lider_digital_proprias',
+                          'coordenador_callcenter', 'executivo_vendas', 'gerente_regional', 'casa_conectada']
+        && c.categoryLabel is string && c.categoryLabel.size() <= 100
+        && c.inputs is map && c.inputs.size() <= 10
+        && numeroOk(c.baseCommission)
+        && numeroOk(c.finalAmount)
+        && (!('qualityAccelerator' in c) || numeroOk(c.qualityAccelerator))
+        && (!('pctAttainment' in c) || numeroOk(c.pctAttainment))
+        && c.components is list && c.components.size() <= 10
+        && c.partial is bool
+        && c.memory is list && c.memory.size() <= 20
+        && c.warnings is list && c.warnings.size() <= 10
+        && c.rulesVersion is string && c.rulesVersion.size() <= 30
+        && c.calculatedAt == request.time;
     }
 
     match /users/{uid} {
-      // Lê apenas o próprio documento.
-      allow read: if logado() && request.auth.uid == uid;
+      allow read: if dono(uid);
 
-      // Cria apenas o próprio documento, com exatamente os campos esperados,
-      // data do servidor e WhatsApp desativado (sem consentimento presumido).
-      allow create: if logado()
-        && request.auth.uid == uid
-        && request.resource.data.keys().hasOnly(['uid', 'name', 'phoneNumber', 'createdAt', 'whatsappEnabled'])
-        && request.resource.data.keys().hasAll(['uid', 'name', 'phoneNumber', 'createdAt', 'whatsappEnabled'])
-        && request.resource.data.uid == uid
-        && request.resource.data.name is string
-        && request.resource.data.name.size() >= 2
-        && request.resource.data.name.size() <= 80
+      allow create: if dono(uid)
+        && request.resource.data.keys().hasOnly(['displayName', 'phoneNumber', 'email', 'createdAt'])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() >= 2
+        && request.resource.data.displayName.size() <= 80
         && request.resource.data.phoneNumber is string
-        && request.resource.data.phoneNumber.matches('^\\+[1-9][0-9]{7,14}$')
-        && telefoneConfere(request.resource.data.phoneNumber)
-        && request.resource.data.createdAt == request.time
-        && request.resource.data.whatsappEnabled == false;
+        && request.resource.data.phoneNumber.size() <= 20
+        && request.resource.data.email is string
+        && request.resource.data.email.matches('^[0-9]+@phone\\.invalid$');
 
-      // O usuário só pode REVOGAR o consentimento (true -> false).
-      // Conceder consentimento é feito pelo backend, que registra a prova.
-      allow update: if logado()
-        && request.auth.uid == uid
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['whatsappEnabled', 'updatedAt'])
-        && request.resource.data.whatsappEnabled == false
-        && request.resource.data.updatedAt == request.time;
+      // Só o campo lastCalculation pode mudar; nome, telefone e demais campos ficam intocados.
+      allow update: if dono(uid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastCalculation'])
+        && calculoValido(request.resource.data.lastCalculation);
 
-      // Exclusão da conta/dados: apenas via backend.
       allow delete: if false;
     }
 
-    // Todo o resto é negado por padrão.
     match /{document=**} {
       allow read, write: if false;
     }
