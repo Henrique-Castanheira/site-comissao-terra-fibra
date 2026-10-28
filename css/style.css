@@ -1,118 +1,220 @@
-/* Botão Principal */
-.btn-contato {
-  background-color: #0083ca;
-  color: #ffffff;
-  border: none;
-  padding: 10px 20px;
-  font-size: 15px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+/* Identidade visual Terra Fibra.
+ * Cores amostradas do documento oficial "RV Geral Terra Oficial (Outubro26)" e do logo.
+ * Se houver um manual de marca, troque APENAS os valores das variáveis abaixo.
+ *
+ * Fonte: o documento usa Century Gothic / Calibri (fontes licenciadas, não distribuídas aqui).
+ * Para usar a fonte oficial, coloque os arquivos em /fonts e descomente o bloco @font-face:
+ *
+ * @font-face {
+ *   font-family: "Terra Sans";
+ *   src: url("../fonts/TerraSans-Regular.woff2") format("woff2");
+ *   font-weight: 400; font-display: swap;
+ * }
+ * @font-face {
+ *   font-family: "Terra Sans";
+ *   src: url("../fonts/TerraSans-Bold.woff2") format("woff2");
+ *   font-weight: 700; font-display: swap;
+ * }
+ */
+:root {
+  /* Paleta do logo e do fundo institucional (imagens oficiais enviadas) */
+  --terra-roxo: #8e0abe;
+  --terra-roxo-escuro: #5b0a7f;
+  --terra-violeta: #9000ff;
+  --terra-magenta: #ff0088;
+  --terra-laranja: #ff8800;
+  --terra-laranja-claro: #ffb15e;
+  --terra-azul: #2686ff;
+  --terra-cinza-logo: #686868;
+  --gradiente-terra: linear-gradient(90deg, #8e0abe 0%, #d6169b 50%, #ff8800 100%);
+  --gradiente-fundo: linear-gradient(160deg, #8e0abe 0%, #b22c8b 30%, #e0507a 62%, #ff9a52 100%);
+
+  --cor-fundo: #8e0abe;
+  --cor-superficie: #f8eefc;
+  --cor-superficie-2: #efdcf7;
+  --cor-campo: #ffffff;
+  --cor-texto: #2a1233;
+  --cor-texto-suave: #5e4668;
+  --cor-borda: #d7b4e6;
+  --cor-primaria: #8e0abe;
+  --cor-primaria-escura: #5b0a7f;
+  --cor-borda-foco: #d08fe8;
+  --cor-fundo-input-ativo: #f2dcfa;
+  --cor-erro: #b42318;
+  --cor-erro-fundo: #fef3f2;
+  --cor-erro-borda: #fda29b;
+  --cor-sucesso: #027a48;
+  --cor-sucesso-fundo: #ecfdf3;
+  --raio: 12px;
+  --fonte: "Terra Sans", "Century Gothic", "Segoe UI", Calibri, system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-.btn-contato:hover {
-  background-color: #005f93;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
-/* Fundo Escuro do Modal */
-.modal-contato-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  padding: 16px;
+  padding-top: 20px;
+  background: var(--cor-fundo);
+  background-image: var(--gradiente-fundo);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  color: var(--cor-texto);
+  font-family: var(--fonte);
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
-/* Caixa do Modal */
-.modal-contato-content {
-  background-color: #ffffff;
-  padding: 24px;
-  border-radius: 8px;
-  width: 90%;
+/* Barra de cor da marca no topo de todas as páginas */
+body::before {
+  content: "";
+  display: none;
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 6px;
+  background: var(--gradiente-terra);
+  z-index: 10;
+}
+
+.marca { margin: -8px -8px 18px; }
+.marca img { display: block; width: 100%; height: auto; border-radius: 10px; }
+
+.card {
+  width: 100%;
   max-width: 400px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  position: relative;
-  font-family: Arial, sans-serif;
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  padding: 32px 28px;
+  box-shadow: 0 10px 30px rgba(60, 0, 80, 0.35);
 }
 
-.fechar-modal {
-  position: absolute;
-  top: 12px;
-  right: 16px;
-  font-size: 24px;
-  font-weight: bold;
-  cursor: pointer;
-  color: #666;
+h1 {
+  margin: 0 0 20px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
 }
 
-/* Formulário e Inputs */
-.form-group {
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column;
+.campo { margin-bottom: 18px; }
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  font-size: 0.95rem;
 }
 
-.form-group label {
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #333;
+input {
+  width: 100%;
+  padding: 11px 12px;
+  font: inherit;
+  color: inherit;
+  background: var(--cor-campo);
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
 }
 
-.form-group input {
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  outline: none;
+input:focus-visible,
+.btn:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(112, 48, 160, 0.4);
+  outline-offset: 2px;
 }
 
-.form-group input:focus {
-  border-color: #0083ca;
-}
+input:focus-visible { border-color: var(--cor-primaria); }
 
-.msg-erro {
-  color: #d9534f;
-  font-size: 12px;
+input[aria-invalid="true"] { border-color: var(--cor-erro); }
+
+.ajuda {
+  display: block;
   margin-top: 4px;
+  color: var(--cor-texto-suave);
+  font-size: 0.82rem;
 }
 
-/* Ações / Botões */
-.form-actions {
+.erro-campo {
+  display: block;
+  margin-top: 4px;
+  color: var(--cor-erro);
+  font-size: 0.85rem;
+}
+
+.btn {
   display: flex;
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.btn-salvar {
-  flex: 1;
-  background-color: #28a745;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  font: inherit;
+  font-weight: 600;
   color: #fff;
-  border: none;
-  padding: 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.btn-salvar:hover {
-  background-color: #218838;
-}
-
-.btn-fechar {
-  flex: 1;
-  background-color: #6c757d;
-  color: #fff;
-  border: none;
-  padding: 10px;
-  border-radius: 4px;
+  background: var(--cor-primaria);
+  background-image: var(--gradiente-terra);
+  border: 0;
+  border-radius: 8px;
   cursor: pointer;
 }
 
-.btn-fechar:hover {
-  background-color: #5a6268;
+.btn:hover { filter: brightness(0.92); }
+
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: girar 0.7s linear infinite;
+}
+
+@keyframes girar { to { transform: rotate(360deg); } }
+
+.alerta {
+  margin-bottom: 18px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  border: 1px solid transparent;
+}
+
+.alerta.erro {
+  color: var(--cor-erro);
+  background: var(--cor-erro-fundo);
+  border-color: var(--cor-erro-borda);
+}
+
+.alerta.sucesso {
+  color: var(--cor-sucesso);
+  background: var(--cor-sucesso-fundo);
+  border-color: #6ce9a6;
+}
+
+.links {
+  margin: 20px 0 0;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+a { color: var(--cor-primaria); }
+
+[hidden] { display: none !important; }
+
+@media (max-width: 480px) {
+  .card { padding: 24px 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation-duration: 2s; }
 }
