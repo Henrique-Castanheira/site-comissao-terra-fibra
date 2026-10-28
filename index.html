@@ -2,50 +2,64 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex">
-  <title>Entrar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login/Cadastro</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <main class="card" aria-labelledby="titulo">
-    <div class="marca"><img src="img/banner-terra.jpg" alt="Terra – conectado por Vivo Fibra" width="447" height="170"></div>
-    <h1 id="titulo">Entrar</h1>
 
-    <div id="mensagem" class="alerta" role="alert" aria-live="polite" hidden></div>
+  <!-- Botão para abrir o Modal -->
+  <button type="button" class="btn-contato" onclick="abrirModalContato()">
+    Abrir Formulário / Contato
+  </button>
 
-    <form id="form-login" novalidate>
-      <div class="campo">
-        <label for="telefone">Telefone</label>
-        <input id="telefone" name="telefone" type="tel" inputmode="tel"
-               autocomplete="tel" placeholder="(11) 99999-9999" required>
-        <small class="ajuda">Com DDD. Para outros países, use o formato +código do país.</small>
-        <span class="erro-campo" id="erro-telefone" hidden></span>
-      </div>
+  <!-- Modal -->
+  <div id="modalContato" class="modal-contato-overlay" style="display: none;">
+    <div class="modal-contato-content">
+      <span class="fechar-modal" onclick="fecharModalContato()">&times;</span>
+      <h3>Informações de Contato e Valor</h3>
+      <hr />
 
-      <div class="campo">
-        <label for="senha">Senha</label>
-        <input id="senha" name="senha" type="password"
-               autocomplete="current-password" required>
-        <span class="erro-campo" id="erro-senha" hidden></span>
-      </div>
+      <form id="formContato" onsubmit="enviarFormulario(event)">
+        <!-- Campo de Telefone -->
+        <div class="form-group">
+          <label for="telefone">Telefone / WhatsApp:</label>
+          <input 
+            type="tel" 
+            id="telefone" 
+            name="telefone" 
+            placeholder="(19) 99999-9999" 
+            maxlength="15" 
+            required 
+            oninput="mascaraTelefone(this)"
+          />
+          <small id="erroTelefone" class="msg-erro" style="display: none;">
+            Digite o número completo com DDD (11 dígitos).
+          </small>
+        </div>
 
-      <button type="submit" id="btn-entrar" class="btn">
-        <span class="btn-texto">Entrar</span>
-        <span class="spinner" aria-hidden="true" hidden></span>
-      </button>
-    </form>
+        <!-- Campo de Valor (R$) -->
+        <div class="form-group">
+          <label for="valor">Valor da Comissão / Plano:</label>
+          <input 
+            type="text" 
+            id="valor" 
+            name="valor" 
+            placeholder="R$ 0,00" 
+            required 
+            oninput="mascaraMoeda(this)"
+          />
+        </div>
 
-    <p class="links">
-      Não tem uma conta?<a href="cadastro.html">Criar conta</a>
-    </p>
-    <!--
-      "Esqueci minha senha" foi omitido de propósito: com a arquitetura atual
-      (e-mail sintético derivado do telefone) não existe um fluxo de recuperação
-      seguro. Veja a seção "Recuperação de senha" no README.md.
-    -->
-  </main>
+        <div class="form-actions">
+          <button type="submit" class="btn-salvar">Enviar / Salvar</button>
+          <button type="button" class="btn-fechar" onclick="fecharModalContato()">Cancelar</button>
+        </div>
+      </form>
 
-  <script type="module" src="js/login.js"></script>
+    </div>
+  </div>
+
+  <script src="js/ui.js"></script>
 </body>
 </html>
